@@ -162,14 +162,21 @@
 	        </pipe>
 
 			<!-- Create file and info -->
-			<pipe name="create file" className="nl.nn.adapterframework.pipes.FilePipe"
-				actions="create" directory="${testdata.dir}" writeSuffix=".abc">
-				<param name="writeSuffix" value=".txt" />
-				<forward name="success" path="info file" />
+			<pipe name="create file" className="nl.nn.adapterframework.pipes.LocalFileSystemPipe"
+				action="write" root="${testdata.dir}" storeResultInSessionKey="createData">
+				<param name="filename" xpathExpression="translate(concat(current-time(),'.txt'),':','_')"/>
+				<forward name="success" path="echo path name" />
 			</pipe>
 		
-			<pipe name="info file" className="nl.nn.adapterframework.pipes.FilePipe"
-				actions="info">
+			<pipe className="nl.nn.adapterframework.pipes.XsltPipe"
+				name="echo path name"
+				outputType="text"
+				xpathExpression="file/@canonicalName">
+				<Forward name="success" path="info file"/>
+			</pipe>
+			
+			<pipe name="info file" className="nl.nn.adapterframework.pipes.LocalFileSystemPipe"
+				action="info">
 				<forward name="success" path="EXIT" />
 			</pipe>
 		</pipeline>
