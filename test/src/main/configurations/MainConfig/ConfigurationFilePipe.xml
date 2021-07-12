@@ -18,24 +18,22 @@
 			  <forward name="success" path="write file"/>
 			</pipe>
 			
-			<!-- Write file -->
-			<pipe
-				name="write file"
-	        	className="nl.nn.adapterframework.pipes.FilePipe"
-	        	actions="write"
-	        	filenameSessionKey="filename"
-	        	createDirectory="true">
-	        	<forward name="success" path="switchAction"/>
-	        </pipe>
-	        
+	       <pipe name="write file" className="nl.nn.adapterframework.pipes.LocalFileSystemPipe"
+				action="write" 
+				createFolder="true"
+				overwrite="true">
+				<param name="filename" sessionKey="filename"/>
+				<forward name="success" path="switchAction" />
+			</pipe>
+	         
 			<!-- choose which action should be done -->
 			<pipe name="switchAction" className="nl.nn.adapterframework.pipes.XmlSwitch" xpathExpression="request/@action" getInputFromSessionKey="originalMessage"/>
 						
 			<!-- Read file / getInputFromSessionKey -->
 			<pipe
 				name="read file via getInputFromSessionKey"
-	        	className="nl.nn.adapterframework.pipes.FilePipe"
-	        	actions="read"
+	        	className="nl.nn.adapterframework.pipes.LocalFileSystemPipe"
+	        	action="read"
 	        	getInputFromSessionKey="filename"	        
 	        	>
 	        	<forward name="success" path="EXIT"/>
@@ -49,12 +47,13 @@
 	        	filenameSessionKey="filename">
 	        	<forward name="success" path="EXIT"/>
 	        </pipe>
-
+			
+			
 			<!-- Read file at classpath -->
 			<pipe
 				name="read file at classpath"
-	        	className="nl.nn.adapterframework.pipes.FilePipe"
-	        	actions="read"
+	        	className="nl.nn.adapterframework.pipes.LocalFileSystemPipe"
+	        	action="read"
 	        	getInputFromFixedValue="FilePipe/sample.txt"
 	        	fileSource="classpath">
 	        	<forward name="success" path="EXIT"/>
